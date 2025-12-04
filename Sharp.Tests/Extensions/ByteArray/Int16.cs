@@ -1,0 +1,450 @@
+using Sharp.Extensions;
+using System;
+using Xunit;
+
+namespace Sharp.Tests
+{
+    public partial class ByteArrayExtensionsTests
+    {
+        [Fact]
+        public void Insert_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.Insert(index, value);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousInsert_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.DangerousInsert(index, value);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void InsertInvokedWithBigEndianSetToFalse_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.Insert(index, value, bigEndian: false);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousInsertInvokedWithBigEndianSetToFalse_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.DangerousInsert(index, value, bigEndian: false);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void InsertInvokedWithBigEndianSetToTrue_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.Insert(index, value, bigEndian: true);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousInsertInvokedWithBigEndianSetToTrue_WhenUsedWithInt16_ShouldInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            actual.DangerousInsert(index, value, bigEndian: true);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Insert_WhenUsedWithInt16ExceedingByteArraySpace_ShouldThrowIndexOutOfRangeException()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(byte), sizeof(short)) + sizeof(decimal);
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+
+            // Act and Assert
+            Assert.Throws<IndexOutOfRangeException>(() => actual.Insert(index, value));
+        }
+
+        [Fact]
+        public void TryInsert_WhenUsedWithInt16_ShouldReturnTrueAndInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = actual.TryInsert(index, value);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryInsertInvokedWithBigEndianSetToFalse_WhenUsedWithInt16_ShouldReturnTrueAndInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = actual.TryInsert(index, value, bigEndian: false);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryInsertInvokedWithBigEndianSetToTrue_WhenUsedWithInt16_ShouldReturnTrueAndInsertValueIntoByteArrayAtProvidedIndex()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] expected = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                expected[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = actual.TryInsert(index, value, bigEndian: true);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryInsert_WhenUsedWithInt16ExceedingByteArraySpace_ShouldReturnFalse()
+        {
+            // Arrange
+            short value = 0x1234;
+            int index = _random.Next(sizeof(byte), sizeof(short)) + sizeof(decimal);
+            byte[] actual = new byte[sizeof(decimal) + sizeof(short)];
+
+            // Act
+            bool success = actual.TryInsert(index, value);
+
+            // Assert
+            Assert.False(success);
+        }
+
+        [Fact]
+        public void ToInt16_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.ToInt16(index);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousToInt16_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.DangerousToInt16(index);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ToInt16InvokedWithBigEndianSetToFalse_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.ToInt16(index, bigEndian: false);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousToInt16InvokedWithBigEndianSetToFalse_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.DangerousToInt16(index, bigEndian: false);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ToInt16InvokedWithBigEndianSetToTrue_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.ToInt16(index, bigEndian: true);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void DangerousToInt16InvokedWithBigEndianSetToTrue_WhenUsedWithByteArray_ShouldReturnValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            short actual = sourceBytes.DangerousToInt16(index, bigEndian: true);
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void ToInt16_WhenUsedWithByteArrayExceedingItsSpace_ShouldThrowIndexOutOfRangeException()
+        {
+            // Arrange
+            int index = _random.Next(sizeof(byte), sizeof(short)) + sizeof(decimal);
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+
+            // Act and Assert
+            Assert.Throws<IndexOutOfRangeException>(() => sourceBytes.ToInt16(index));
+        }
+
+        [Fact]
+        public void TryToInt16_WhenUsedWithByteArray_ShouldReturnTrueAndAssignValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes;
+
+            if (BitConverter.IsLittleEndian)
+                valueInBytes = [0x34, 0x12];
+            else
+                valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = sourceBytes.TryToInt16(index, out short actual);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryToInt16InvokedWithBigEndianSetToFalse_WhenUsedWithByteArray_ShouldReturnTrueAndAssignValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x34, 0x12];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = sourceBytes.TryToInt16(index, bigEndian: false, out short actual);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryToInt16InvokedWithBigEndianSetToTrue_WhenUsedWithByteArray_ShouldReturnTrueAndAssignValueStartingFromTheProvidedIndex()
+        {
+            // Arrange
+            short expected = 0x1234;
+            int index = _random.Next(sizeof(decimal));
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+            byte[] valueInBytes = [0x12, 0x34];
+
+            for (int sourceIndex = 0, destinationIndex = index; sourceIndex < valueInBytes.Length; sourceIndex++, destinationIndex++)
+                sourceBytes[destinationIndex] = valueInBytes[sourceIndex];
+
+            // Act
+            bool success = sourceBytes.TryToInt16(index, bigEndian: true, out short actual);
+
+            // Assert
+            Assert.True(success);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void TryToInt16_WhenUsedWithByteArrayExceedingItsSpace_ShouldReturnFalseAndAssignDefaultValue()
+        {
+            // Arrange
+            short expected = default;
+            int index = _random.Next(sizeof(byte), sizeof(short)) + sizeof(decimal);
+            byte[] sourceBytes = new byte[sizeof(decimal) + sizeof(short)];
+
+            // Act
+            bool success = sourceBytes.TryToInt16(index, out short actual);
+
+            // Assert
+            Assert.False(success);
+            Assert.Equal(expected, actual);
+        }
+    }
+}
