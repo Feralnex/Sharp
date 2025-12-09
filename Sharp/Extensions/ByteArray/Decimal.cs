@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.HighPerformance;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Sharp.Extensions
@@ -14,7 +15,7 @@ namespace Sharp.Extensions
         }
 
         public static void DangerousInsert(this byte[] destination, int index, decimal value)
-            => Unsafe.As<byte, decimal>(ref destination[index]) = value;
+            => Unsafe.As<byte, decimal>(ref destination.DangerousGetReferenceAt(index)) = value;
 
         public static void Insert(this byte[] destination, int index, decimal value, bool bigEndian)
         {
@@ -31,7 +32,7 @@ namespace Sharp.Extensions
             if (shouldReverse)
                 value = value.Reverse();
 
-            Unsafe.As<byte, decimal>(ref destination[index]) = value;
+            destination.DangerousInsert(index, value);
         }
 
         public static bool TryInsert(this byte[] destination, int index, decimal value)
@@ -63,7 +64,7 @@ namespace Sharp.Extensions
         }
 
         public static decimal DangerousToDecimal(this byte[] source, int index)
-            => Unsafe.ReadUnaligned<decimal>(ref source[index]);
+            => Unsafe.ReadUnaligned<decimal>(ref source.DangerousGetReferenceAt(index));
 
         public static decimal ToDecimal(this byte[] source, int index, bool bigEndian)
         {

@@ -1,0 +1,166 @@
+﻿using CommunityToolkit.HighPerformance;
+using System;
+using System.Runtime.CompilerServices;
+
+namespace Sharp.Extensions
+{
+    public static partial class SpanOfBytesExtensions
+    {
+        public unsafe static void Insert(this Span<byte> destination, int index, nint value)
+        {
+            if (destination.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            destination.DangerousInsert(index, value);
+        }
+
+        public static void DangerousInsert(this Span<byte> destination, int index, nint value)
+            => Unsafe.As<byte, nint>(ref destination.DangerousGetReferenceAt(index)) = value;
+
+        public unsafe static void Insert(this Span<byte> destination, int index, nint value, bool bigEndian)
+        {
+            if (destination.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            destination.DangerousInsert(index, value, bigEndian);
+        }
+
+        public static void DangerousInsert(this Span<byte> destination, int index, nint value, bool bigEndian)
+        {
+            bool shouldReverse = (bigEndian && BitConverter.IsLittleEndian) || (!bigEndian && !BitConverter.IsLittleEndian);
+
+            if (shouldReverse)
+                value = value.Reverse();
+
+            destination.DangerousInsert(index, value);
+        }
+
+        public unsafe static bool TryInsert(this Span<byte> destination, int index, nint value)
+        {
+            if (destination.Length - index < sizeof(nint))
+                return false;
+
+            destination.DangerousInsert(index, value);
+
+            return true;
+        }
+
+        public unsafe static bool TryInsert(this Span<byte> destination, int index, nint value, bool bigEndian)
+        {
+            if (destination.Length - index < sizeof(nint))
+                return false;
+
+            destination.DangerousInsert(index, value, bigEndian);
+
+            return true;
+        }
+
+        public unsafe static nint ToNInt(this Span<byte> source, int index)
+        {
+            if (source.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            return source.DangerousToNInt(index);
+        }
+
+        public unsafe static nint ToNInt(this ReadOnlySpan<byte> source, int index)
+        {
+            if (source.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            return source.DangerousToNInt(index);
+        }
+
+        public static nint DangerousToNInt(this Span<byte> source, int index)
+            => Unsafe.ReadUnaligned<nint>(ref source.DangerousGetReferenceAt(index));
+
+        public static nint DangerousToNInt(this ReadOnlySpan<byte> source, int index)
+            => Unsafe.ReadUnaligned<nint>(ref source.DangerousGetReferenceAt(index));
+
+        public unsafe static nint ToNInt(this Span<byte> source, int index, bool bigEndian)
+        {
+            if (source.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            return source.DangerousToNInt(index, bigEndian);
+        }
+
+        public unsafe static nint ToNInt(this ReadOnlySpan<byte> source, int index, bool bigEndian)
+        {
+            if (source.Length - index < sizeof(nint))
+                throw new IndexOutOfRangeException();
+
+            return source.DangerousToNInt(index, bigEndian);
+        }
+
+        public static nint DangerousToNInt(this Span<byte> source, int index, bool bigEndian)
+        {
+            nint value = source.DangerousToNInt(index);
+            bool shouldReverse = (bigEndian && BitConverter.IsLittleEndian) || (!bigEndian && !BitConverter.IsLittleEndian);
+
+            if (shouldReverse)
+                value = value.Reverse();
+
+            return value;
+        }
+
+        public static nint DangerousToNInt(this ReadOnlySpan<byte> source, int index, bool bigEndian)
+        {
+            nint value = source.DangerousToNInt(index);
+            bool shouldReverse = (bigEndian && BitConverter.IsLittleEndian) || (!bigEndian && !BitConverter.IsLittleEndian);
+
+            if (shouldReverse)
+                value = value.Reverse();
+
+            return value;
+        }
+
+        public unsafe static bool TryToNInt(this Span<byte> source, int index, out nint value)
+        {
+            value = default;
+
+            if (source.Length - index < sizeof(nint))
+                return false;
+
+            value = source.DangerousToNInt(index);
+
+            return true;
+        }
+
+        public unsafe static bool TryToNInt(this ReadOnlySpan<byte> source, int index, out nint value)
+        {
+            value = default;
+
+            if (source.Length - index < sizeof(nint))
+                return false;
+
+            value = source.DangerousToNInt(index);
+
+            return true;
+        }
+
+        public unsafe static bool TryToNInt(this Span<byte> source, int index, bool bigEndian, out nint value)
+        {
+            value = default;
+
+            if (source.Length - index < sizeof(nint))
+                return false;
+
+            value = source.DangerousToNInt(index, bigEndian);
+
+            return true;
+        }
+
+        public unsafe static bool TryToNInt(this ReadOnlySpan<byte> source, int index, bool bigEndian, out nint value)
+        {
+            value = default;
+
+            if (source.Length - index < sizeof(nint))
+                return false;
+
+            value = source.DangerousToNInt(index, bigEndian);
+
+            return true;
+        }
+    }
+}

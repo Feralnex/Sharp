@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.HighPerformance;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Sharp.Extensions
@@ -14,7 +15,7 @@ namespace Sharp.Extensions
         }
 
         public static void DangerousInsert(this byte[] destination, int index, bool value)
-            => Unsafe.As<byte, bool>(ref destination[index]) = value;
+            => Unsafe.As<byte, bool>(ref destination.DangerousGetReferenceAt(index)) = value;
 
         public static bool TryInsert(this byte[] destination, int index, bool value)
         {
@@ -35,7 +36,7 @@ namespace Sharp.Extensions
         }
 
         public static bool DangerousToBool(this byte[] source, int index)
-            => Unsafe.ReadUnaligned<bool>(ref source[index]);
+            => Unsafe.ReadUnaligned<bool>(ref source.DangerousGetReferenceAt(index));
 
         public static bool TryToBool(this byte[] source, int index, out bool value)
         {
